@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
+using Utils;
 
 namespace DefaultNamespace
 {
@@ -14,6 +15,9 @@ namespace DefaultNamespace
         public Material mat1;
         public Material mat2;
 
+        // 是否输掉了
+        private TimeCountDown loseTimer = new TimeCountDown(0.4f);
+        private bool _bLose;
         // 长按
         public bool bPress
         {
@@ -35,9 +39,9 @@ namespace DefaultNamespace
         }
 
 
-        private void OnTriggerEnter(Collider other)
+        private void OnTriggerStay(Collider other)
         {
-            Debug.Log(other.name);
+            loseTimer.FillTime();
         }
 
         private bool _bPress;
@@ -53,13 +57,28 @@ namespace DefaultNamespace
         }
 
 
+        private void Update()
+        {
+            if (bPress)
+            {
+                loseTimer.FillTime();
+            }
+            loseTimer.Tick(Time.deltaTime);
+            if (loseTimer.TimeOut)
+            {
+                _bLose = true;
+                StopCoroutine(CreatePrefab());
+                gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+            }
+        }
+
         /// <summary>
         /// 持续创建Prefab的过程
         /// </summary>
         /// <returns></returns>
         IEnumerator CreatePrefab()
         {
-            while (true)
+            while (!_bLose)
             {
                 GameObject line = Instantiate(_objLinePrefab);
                 line.transform.position = transform.position;
@@ -84,14 +103,20 @@ namespace DefaultNamespace
         public void OnClick()
         {
             bLeft = !bLeft;
-            GameObject line = Instantiate(_objLinePrefab);
-            line.transform.position = transform.position;
+            if (!_bLose)
+            {
+                GameObject line = Instantiate(_objLinePrefab);
+                line.transform.position = transform.position;
+            }
         }
 
 
         public void OnLongPress()
         {
-            bPress = true;
+            if (!_bLose)
+            {
+                bPress = true;
+            }
             OnClick();
         }
 
