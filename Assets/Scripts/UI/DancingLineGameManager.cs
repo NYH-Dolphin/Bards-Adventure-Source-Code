@@ -30,7 +30,9 @@ namespace UI
             restart.onClick.AddListener(() =>
             {
                 restartCanvas.SetActive(true);
+                pauseCanvas.SetActive(false);
                 GameObject.Find("Line").gameObject.GetComponent<LineController>().bPause = true;
+                toggle.enabled = false;
             });
         }
 
@@ -39,6 +41,7 @@ namespace UI
             GameObject.Find("Line").gameObject.GetComponent<LineController>().bStart = false;
             GameObject.Find("Line").gameObject.GetComponent<LineController>().bStart = true;
             GameObject.Find("Line").gameObject.GetComponent<LineController>().bPause = false;
+            toggle.isOn = false;
             mainCanvas.SetActive(false);
             gameCanvas.SetActive(true);
             loseCanvas.SetActive(false);
@@ -75,12 +78,15 @@ namespace UI
         public void OnClickCancelRestart()
         {
             GameObject.Find("Line").gameObject.GetComponent<LineController>().bPause = false;
+            restartCanvas.SetActive(false);
+            toggle.enabled = true;
         }
 
         public void OnClickPauseToggle(Toggle t, bool isOn)
         {
             GameObject.Find("Line").gameObject.GetComponent<LineController>().bPause = isOn;
             pauseCanvas.SetActive(isOn);
+            restart.enabled = !isOn;
         }
         
     }
