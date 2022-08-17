@@ -24,6 +24,8 @@ namespace DefaultNamespace
         private TimeCountDown loseTimer = new TimeCountDown(0.15f); // 计时器
         private bool _bLose = true;
 
+        private bool _bObstacle = false;
+
         public bool bLose
         {
             get => _bLose;
@@ -42,7 +44,7 @@ namespace DefaultNamespace
         }
 
         // 返回主页面的时间
-        private TimeCountDown backTime = new TimeCountDown(3f);
+        private TimeCountDown backTime = new TimeCountDown(2f);
 
         // 开始游戏
         private bool _bStart;
@@ -57,9 +59,10 @@ namespace DefaultNamespace
                 {
                     // 放置为原来的位置
                     gameObject.transform.position = new Vector3(0, 0, 0);
+                    gameObject.transform.rotation = new Quaternion(0, 0, 0, 0);
                     music.Stop();
                     DancingLineGameManager.Instance.OnOpenLoseCanvas();
-                    
+
                     // 删除所有的prefab
                     List<Transform> lst = new List<Transform>();
                     foreach (Transform child in lines.transform)
@@ -79,8 +82,9 @@ namespace DefaultNamespace
                     music.Play();
                     bLeft = false;
                     bLose = false;
+                    _bObstacle = false;
                 }
-                
+
                 _bStart = value;
             }
         }
@@ -94,7 +98,6 @@ namespace DefaultNamespace
             get => _bPause;
             set
             {
-                
                 if (value)
                 {
                     music.Pause();
@@ -103,6 +106,7 @@ namespace DefaultNamespace
                 {
                     music.Play();
                 }
+
                 _bPause = value;
             }
         }
@@ -125,6 +129,7 @@ namespace DefaultNamespace
                     _objLinePrefab = objLinePrefab1;
                     gameObject.GetComponent<MeshRenderer>().material = mat1;
                 }
+
                 _bPress = value;
             }
         }
@@ -132,7 +137,16 @@ namespace DefaultNamespace
 
         private void OnTriggerStay(Collider other)
         {
-            loseTimer.FillTime();
+            if (other.gameObject.layer == 6)
+            {
+                loseTimer.FillTime();
+            }
+            else if (other.gameObject.layer == 7)
+            {
+                bLose = true; // 输掉游戏
+                _bObstacle = true;
+                gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+            }
         }
 
         private GameObject _objLinePrefab;
@@ -154,29 +168,29 @@ namespace DefaultNamespace
                     loseTimer.FillTime();
                 }
 
-                // loseTimer.Tick(Time.deltaTime);
-                // if (loseTimer.TimeOut)
-                // {
-                //     bLose = true; // 输掉游戏
-                //     gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
-                // }
-                //
-                //
-                // if (bLose)
-                // {
-                //     backTime.Tick(Time.deltaTime);
-                //     if (backTime.TimeOut)
-                //     {
-                //         bStart = false; // 取消开始游戏
-                //         backTime.FillTime();
-                //     }
-                // }
+                loseTimer.Tick(Time.deltaTime);
+                if (loseTimer.TimeOut)
+                {
+                    bLose = true; // 输掉游戏
+                    gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+                }
+
+
+                if (bLose)
+                {
+                    backTime.Tick(Time.deltaTime);
+                    if (backTime.TimeOut)
+                    {
+                        bStart = false; // 取消开始游戏
+                        backTime.FillTime();
+                    }
+                }
             }
         }
 
         private void LateUpdate()
         {
-            if (bStart && !bPause)
+            if (bStart && !bPause && !_bObstacle)
             {
                 if (bLeft)
                 {

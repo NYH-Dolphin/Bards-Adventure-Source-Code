@@ -119,7 +119,7 @@ namespace UI
             for (int i = 3; i > 0; i--)
             {
                 countDown.text = i.ToString();
-                countdownEffect.Play();
+                btnEffect.Play();
                 yield return new WaitForSeconds(1f);
             }
 
