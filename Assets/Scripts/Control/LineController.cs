@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UI;
 using UnityEngine;
 using Utils;
 
@@ -15,10 +16,99 @@ namespace DefaultNamespace
         public Material mat1;
         public Material mat2;
 
-        // 是否输掉了
-        private TimeCountDown loseTimer = new TimeCountDown(0.4f);
-        private bool _bLose;
-        // 长按
+        public AudioSource music; // 音乐
+
+        private GameObject lines; // 存放生成的line prefab的父物体
+
+        // 是否输掉游戏
+        private TimeCountDown loseTimer = new TimeCountDown(0.15f); // 计时器
+        private bool _bLose = true;
+
+        public bool bLose
+        {
+            get => _bLose;
+            set
+            {
+                _bLose = value;
+                if (_bLose)
+                {
+                    DancingLineGameManager.Instance.toggle.enabled = false;
+                }
+                else
+                {
+                    DancingLineGameManager.Instance.toggle.enabled = true;
+                }
+            }
+        }
+
+        // 返回主页面的时间
+        private TimeCountDown backTime = new TimeCountDown(3f);
+
+        // 开始游戏
+        private bool _bStart;
+
+        public bool bStart
+        {
+            get => _bStart;
+            set
+            {
+                _bStart = value;
+
+                // 结束游戏
+                if (!_bStart)
+                {
+                    // 放置为原来的位置
+                    gameObject.transform.position = new Vector3(0, 0, 0);
+                    // 删除所有的prefab
+                    List<Transform> lst = new List<Transform>();
+                    foreach (Transform child in lines.transform)
+                    {
+                        lst.Add(child);
+                        Debug.Log(child.gameObject.name);
+                    }
+
+                    foreach (var t in lst)
+                    {
+                        Destroy(t.gameObject);
+                    }
+
+                    music.Stop();
+                    DancingLineGameManager.Instance.OnOpenLoseCanvas();
+                    gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+                }
+                else
+                {
+                    bLeft = false;
+                    bLose = false;
+                    music.Play();
+                }
+            }
+        }
+
+
+        // 暂停游戏
+        private bool _bPause;
+
+        public bool bPause
+        {
+            get => _bPause;
+            set
+            {
+                _bPause = value;
+                if (_bPause)
+                {
+                    music.Pause();
+                }
+                else
+                {
+                    music.Play();
+                }
+            }
+        }
+
+        // 是否长按
+        private bool _bPress;
+
         public bool bPress
         {
             get => _bPress;
@@ -44,32 +134,67 @@ namespace DefaultNamespace
             loseTimer.FillTime();
         }
 
-        private bool _bPress;
-
         private GameObject _objLinePrefab;
 
         private void Start()
         {
             _objLinePrefab = objLinePrefab1;
+            lines = GameObject.Find("[Line]");
             StartCoroutine(CreatePrefab());
-            GameObject line = Instantiate(_objLinePrefab);
-            line.transform.position = transform.position;
         }
 
 
         private void Update()
         {
-            if (bPress)
+            if (bStart && !bPause)
             {
-                loseTimer.FillTime();
+                if (bPress)
+                {
+                    loseTimer.FillTime();
+                }
+
+                loseTimer.Tick(Time.deltaTime);
+                if (loseTimer.TimeOut)
+                {
+                    bLose = true; // 输掉游戏
+                    gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+                }
+
+
+                if (bLose)
+                {
+                    backTime.Tick(Time.deltaTime);
+                    if (backTime.TimeOut)
+                    {
+                        bStart = false; // 取消开始游戏
+                        backTime.FillTime();
+                    }
+                }
             }
-            loseTimer.Tick(Time.deltaTime);
-            if (loseTimer.TimeOut)
+        }
+
+        private void LateUpdate()
+        {
+            if (bStart && !bPause)
             {
-                _bLose = true;
-                StopCoroutine(CreatePrefab());
-                gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+                if (bLeft)
+                {
+                    transform.Translate(Vector3.left * fSpeed * Time.deltaTime, Space.World);
+                }
+                else
+                {
+                    transform.Translate(Vector3.forward * fSpeed * Time.deltaTime, Space.World);
+                }
             }
+        }
+
+        /// <summary>
+        /// 生成Prefab
+        /// </summary>
+        void GeneratePrefab()
+        {
+            GameObject line = Instantiate(_objLinePrefab, lines.transform, true);
+            line.transform.position = transform.position;
         }
 
         /// <summary>
@@ -78,24 +203,14 @@ namespace DefaultNamespace
         /// <returns></returns>
         IEnumerator CreatePrefab()
         {
-            while (!_bLose)
+            while (true)
             {
-                GameObject line = Instantiate(_objLinePrefab);
-                line.transform.position = transform.position;
+                if (bStart && !_bLose && !bPause)
+                {
+                    GeneratePrefab();
+                }
+
                 yield return new WaitForSeconds(0.01f);
-            }
-        }
-
-
-        private void LateUpdate()
-        {
-            if (bLeft)
-            {
-                transform.Translate(Vector3.left * fSpeed * Time.deltaTime, Space.World);
-            }
-            else
-            {
-                transform.Translate(Vector3.forward * fSpeed * Time.deltaTime, Space.World);
             }
         }
 
@@ -105,8 +220,7 @@ namespace DefaultNamespace
             bLeft = !bLeft;
             if (!_bLose)
             {
-                GameObject line = Instantiate(_objLinePrefab);
-                line.transform.position = transform.position;
+                GeneratePrefab();
             }
         }
 
@@ -117,6 +231,7 @@ namespace DefaultNamespace
             {
                 bPress = true;
             }
+
             OnClick();
         }
 
