@@ -52,13 +52,14 @@ namespace DefaultNamespace
             get => _bStart;
             set
             {
-                _bStart = value;
-
                 // 结束游戏
-                if (!_bStart)
+                if (!value)
                 {
                     // 放置为原来的位置
                     gameObject.transform.position = new Vector3(0, 0, 0);
+                    music.Stop();
+                    DancingLineGameManager.Instance.OnOpenLoseCanvas();
+                    
                     // 删除所有的prefab
                     List<Transform> lst = new List<Transform>();
                     foreach (Transform child in lines.transform)
@@ -71,17 +72,16 @@ namespace DefaultNamespace
                     {
                         Destroy(t.gameObject);
                     }
-
-                    music.Stop();
-                    DancingLineGameManager.Instance.OnOpenLoseCanvas();
-                    gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
                 }
                 else
                 {
+                    gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+                    music.Play();
                     bLeft = false;
                     bLose = false;
-                    music.Play();
                 }
+                
+                _bStart = value;
             }
         }
 
@@ -94,8 +94,8 @@ namespace DefaultNamespace
             get => _bPause;
             set
             {
-                _bPause = value;
-                if (_bPause)
+                
+                if (value)
                 {
                     music.Pause();
                 }
@@ -103,6 +103,7 @@ namespace DefaultNamespace
                 {
                     music.Play();
                 }
+                _bPause = value;
             }
         }
 
@@ -114,7 +115,6 @@ namespace DefaultNamespace
             get => _bPress;
             set
             {
-                _bPress = value;
                 if (value)
                 {
                     _objLinePrefab = objLinePrefab2;
@@ -125,6 +125,7 @@ namespace DefaultNamespace
                     _objLinePrefab = objLinePrefab1;
                     gameObject.GetComponent<MeshRenderer>().material = mat1;
                 }
+                _bPress = value;
             }
         }
 
@@ -159,8 +160,8 @@ namespace DefaultNamespace
                     bLose = true; // 输掉游戏
                     gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
                 }
-
-
+                
+                
                 if (bLose)
                 {
                     backTime.Tick(Time.deltaTime);
