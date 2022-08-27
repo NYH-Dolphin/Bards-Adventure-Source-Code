@@ -14,12 +14,107 @@ namespace UI
         public GameObject pauseCanvas;
         public GameObject restartCanvas;
         public GameObject countDownCanvas;
+        public GameObject winCanvas;
 
         public Toggle toggle; // 暂停/开始 toggle
         public Button restart; // 重新开始btn
         public Text countDown; // 倒计时
         public AudioSource btnEffect; // 按钮音效
-        public AudioSource countdownEffect; // 倒计时音效
+
+
+        public AudioSource music; // 音乐
+
+
+        // 暂停游戏
+        private bool _bPause;
+
+        public bool bPause
+        {
+            get => _bPause;
+            set
+            {
+                if (value)
+                {
+                    music.Pause();
+                }
+                else
+                {
+                    music.Play();
+                }
+
+                _bPause = value;
+            }
+        }
+
+        // 输掉游戏
+        private bool _bLose = true;
+
+        public bool bLose
+        {
+            get => _bLose;
+            set
+            {
+                _bLose = value;
+                if (_bLose)
+                {
+                    Instance.toggle.enabled = false;
+                }
+                else
+                {
+                    Instance.toggle.enabled = true;
+                }
+            }
+        }
+
+        private bool _bWin = false;
+
+        public bool bWin
+        {
+            get => _bWin;
+            set
+            {
+                _bWin = value;
+                if (_bWin)
+                {
+                    Instance.toggle.enabled = false;
+                    restart.enabled = false;
+                }
+            }
+        }
+
+        // 游戏调用委托
+        public delegate void VoidDelegate();
+
+        // 开始游戏触发
+        public VoidDelegate OnGameStart = null;
+
+        // 结束游戏触发
+        public VoidDelegate OnGameEnd = null;
+
+        // 开始/结束游戏
+        private bool _bStart;
+
+        public bool bStart
+        {
+            get => _bStart;
+            set
+            {
+                // 结束游戏
+                if (!value)
+                {
+                    music.Stop();
+                    OnGameEnd?.Invoke();
+                }
+                else
+                {
+                    music.Play();
+                    OnGameStart?.Invoke();
+                }
+
+                _bStart = value;
+            }
+        }
+
 
         public static DancingLineGameManager Instance;
 
@@ -37,19 +132,17 @@ namespace UI
             {
                 restartCanvas.SetActive(true);
                 pauseCanvas.SetActive(false);
-                GameObject.Find("Line").gameObject.GetComponent<LineController>().bPause = true;
+                bPause = true;
                 toggle.enabled = false;
             });
         }
-        
-        
-        
+
 
         public void OnClickGameStart()
         {
-            GameObject.Find("Line").gameObject.GetComponent<LineController>().bStart = false;
-            GameObject.Find("Line").gameObject.GetComponent<LineController>().bStart = true;
-            GameObject.Find("Line").gameObject.GetComponent<LineController>().bPause = false;
+            bStart = false;
+            bStart = true;
+            bPause = false;
             toggle.isOn = false;
             mainCanvas.SetActive(false);
             gameCanvas.SetActive(true);
@@ -57,6 +150,9 @@ namespace UI
             pauseCanvas.SetActive(false);
             restartCanvas.SetActive(false);
             countDownCanvas.SetActive(false);
+            winCanvas.SetActive(false);
+            toggle.enabled = true;
+            restart.enabled = true;
         }
 
         public void OnOpenMainCanvas()
@@ -67,6 +163,7 @@ namespace UI
             pauseCanvas.SetActive(false);
             restartCanvas.SetActive(false);
             countDownCanvas.SetActive(false);
+            winCanvas.SetActive(false);
         }
 
 
@@ -78,12 +175,26 @@ namespace UI
             pauseCanvas.SetActive(false);
             restartCanvas.SetActive(false);
             countDownCanvas.SetActive(false);
+            winCanvas.SetActive(false);
+        }
+
+
+        public void OnOpenWinCanvas()
+        {
+            loseCanvas.SetActive(false);
+            mainCanvas.SetActive(false);
+            gameCanvas.SetActive(false);
+            pauseCanvas.SetActive(false);
+            restartCanvas.SetActive(false);
+            countDownCanvas.SetActive(false);
+            winCanvas.SetActive(true);
         }
 
         public void OnClickRestartBtn()
         {
-            GameObject.Find("Line").gameObject.GetComponent<LineController>().bPause = false;
-            GameObject.Find("Line").gameObject.GetComponent<LineController>().bStart = false;
+            bPause = false;
+            bStart = false;
+            bWin = false;
             btnEffect.Play();
             OnOpenMainCanvas();
         }
@@ -101,7 +212,7 @@ namespace UI
             }
             else
             {
-                GameObject.Find("Line").gameObject.GetComponent<LineController>().bPause = true;
+                bPause = true;
                 pauseCanvas.SetActive(true);
                 restart.enabled = false;
                 btnEffect.Play();
@@ -113,6 +224,7 @@ namespace UI
         {
             restartCanvas.SetActive(false);
             pauseCanvas.SetActive(false);
+            winCanvas.SetActive(false);
             countDownCanvas.SetActive(true);
             toggle.enabled = false;
             restart.enabled = false;
@@ -123,7 +235,7 @@ namespace UI
                 yield return new WaitForSeconds(1f);
             }
 
-            GameObject.Find("Line").gameObject.GetComponent<LineController>().bPause = false;
+            bPause = false;
             countDownCanvas.SetActive(false);
             toggle.enabled = true;
             restart.enabled = true;
