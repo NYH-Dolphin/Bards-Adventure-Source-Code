@@ -168,23 +168,23 @@ namespace DefaultNamespace
                     loseTimer.FillTime();
                 }
 
-                // loseTimer.Tick(Time.deltaTime);
-                // if (loseTimer.TimeOut)
-                // {
-                //     bLose = true; // 输掉游戏
-                //     gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
-                // }
-                //
-                //
-                // if (bLose)
-                // {
-                //     backTime.Tick(Time.deltaTime);
-                //     if (backTime.TimeOut)
-                //     {
-                //         bStart = false; // 取消开始游戏
-                //         backTime.FillTime();
-                //     }
-                // }
+                 // loseTimer.Tick(Time.deltaTime);
+                 // if (loseTimer.TimeOut)
+                 // {
+                 //     bLose = true; // 输掉游戏
+                 //     gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+                 // }
+                 //
+                 //
+                 // if (bLose)
+                 // {
+                 //     backTime.Tick(Time.deltaTime);
+                 //     if (backTime.TimeOut)
+                 //     {
+                 //         bStart = false; // 取消开始游戏
+                 //         backTime.FillTime();
+                 //     }
+                 // }
             }
         }
 
