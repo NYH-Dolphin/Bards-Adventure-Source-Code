@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UI;
 using UnityEngine;
 using Utils;
@@ -10,7 +11,6 @@ namespace DefaultNamespace
     {
         public float fSpeed; // 移动速度
         public bool bLeft; // 向左移动
-
         public GameObject objLinePrefab1;
         public GameObject objLinePrefab2;
         private GameObject _objLinePrefab;
@@ -29,6 +29,13 @@ namespace DefaultNamespace
 
         // 返回主页面的世界
         private TimeCountDown backTime = new TimeCountDown(2f);
+
+        // 皇冠相关
+        private bool _bLastIsLeft; // 记录上一次步骤是否是向左
+        public bool[] crownGet = new bool[3]; // 获得的皇冠数量
+        private Vector3 _lastPos; // 上一次获得皇冠的时候的位置
+        private float _lastTime; // 上一次获得皇冠的时间点
+        public int lastIndex;
 
         // 是否长按
         private bool _bPress;
@@ -114,6 +121,29 @@ namespace DefaultNamespace
         }
 
 
+        public void RecordCheckPoint(int index)
+        {
+            _bLastIsLeft = bLeft;
+            crownGet[index] = true;
+            _lastPos = transform.position;
+            _lastTime = DancingLineGameManager.Instance.music.time;
+            lastIndex = index;
+        }
+
+
+        public void RefreshCheckPoint()
+        {
+            _bLastIsLeft = false;
+            for (int i = 0; i < crownGet.Length; i++)
+            {
+                crownGet[i] = false;
+            }
+
+            _lastPos = new Vector3(0, 0, 0);
+            _lastTime = 0f;
+            lastIndex = -1;
+        }
+
         private void OnTriggerStay(Collider other)
         {
             // 碰撞是的地面的情况
@@ -132,7 +162,6 @@ namespace DefaultNamespace
             // 游戏胜利
             else if (other.gameObject.layer == 8)
             {
-                Debug.Log(other.gameObject.name);
                 DancingLineGameManager.Instance.bWin = true; // 赢了
             }
         }
@@ -141,10 +170,10 @@ namespace DefaultNamespace
         /// <summary>
         /// 结束游戏触发委托
         /// </summary>
-        private void OnGameEnd()
+        public void OnGameEnd()
         {
             // 放置为原来的位置
-            gameObject.transform.position = new Vector3(0, 0, 0);
+            gameObject.transform.position = _lastPos;
             gameObject.transform.rotation = new Quaternion(0, 0, 0, 0);
             DancingLineGameManager.Instance.OnOpenLoseCanvas();
 
@@ -167,8 +196,9 @@ namespace DefaultNamespace
         private void OnGameStart()
         {
             gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
-            bLeft = false;
+            bLeft = _bLastIsLeft;
             DancingLineGameManager.Instance.bLose = false;
+            DancingLineGameManager.Instance.music.time = _lastTime;
             _bObstacle = false;
         }
 
@@ -196,7 +226,7 @@ namespace DefaultNamespace
                     GeneratePrefab();
                 }
 
-                yield return new WaitForSeconds(1 / 6f - 0.01f);
+                yield return new WaitForSeconds(1 / 6f - 0.03f);
             }
         }
 

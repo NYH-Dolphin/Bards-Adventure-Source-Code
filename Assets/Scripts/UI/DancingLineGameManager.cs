@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.UI;
@@ -66,7 +67,7 @@ namespace UI
             }
         }
 
-        private bool _bWin = false;
+        private bool _bWin;
 
         public bool bWin
         {
@@ -116,11 +117,14 @@ namespace UI
         }
 
 
+        public CrownBehavior[] _listCrowns = new CrownBehavior[3];
+        
         public static DancingLineGameManager Instance;
 
         private void Awake()
         {
             Instance = this;
+            iTween.Init(gameObject); // 记得要初始化 iTween...
         }
 
 
@@ -137,6 +141,11 @@ namespace UI
             });
         }
 
+        // 注册皇冠
+        public void RegisterCrown(CrownBehavior crown)
+        {
+            _listCrowns[crown.iIndex] = crown;
+        }
 
         public void OnClickGameStart()
         {
@@ -188,6 +197,7 @@ namespace UI
             restartCanvas.SetActive(false);
             countDownCanvas.SetActive(false);
             winCanvas.SetActive(true);
+            winCanvas.GetComponent<WinPanel>().OnOpenWinPanel();
         }
 
         public void OnClickRestartBtn()
@@ -196,6 +206,12 @@ namespace UI
             bStart = false;
             bWin = false;
             btnEffect.Play();
+            foreach (CrownBehavior crown in _listCrowns)
+            {
+                crown.Refresh();
+            }
+            GameObject.Find("Line").GetComponent<LineController>().RefreshCheckPoint();
+            GameObject.Find("Line").GetComponent<LineController>().OnGameEnd();
             OnOpenMainCanvas();
         }
 
@@ -219,6 +235,21 @@ namespace UI
             }
         }
 
+
+        
+        /// <summary>
+        /// 当结束后从上一个检查点开始
+        /// </summary>
+        public void OnStartFromCheckPoint()
+        {
+            OnClickGameStart();
+            int index = GameObject.Find("Line").GetComponent<LineController>().lastIndex;
+            if (index >= 0)
+            {
+                _listCrowns[index].bGetCrown = false;
+            }
+            toggle.isOn = true;
+        }
 
         IEnumerator PauseCountDown()
         {
