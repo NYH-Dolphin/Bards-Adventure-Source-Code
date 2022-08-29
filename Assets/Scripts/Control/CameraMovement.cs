@@ -9,6 +9,11 @@ namespace Control
 
         public float speed = 2.0f;
 
+        private void Start()
+        {
+            transform.position = objectToFollow.transform.position;
+            transform.rotation = objectToFollow.transform.rotation;
+        }
 
         private void Update()
         {

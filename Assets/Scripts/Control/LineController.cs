@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using UI;
 using UnityEngine;
 using Utils;
@@ -74,7 +73,7 @@ namespace DefaultNamespace
                     winTimer.FillTime();
                     return;
                 }
-                
+
                 Vector3 dir = bLeft ? Vector3.left : Vector3.forward;
                 transform.Translate(dir * fSpeed * Time.deltaTime, Space.World);
                 return;
