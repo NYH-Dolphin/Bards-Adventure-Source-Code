@@ -12,7 +12,7 @@ namespace UI
         public List<GameObject> crowns = new List<GameObject>();
         public Button restartButton;
         public List<AudioSource> crownAudio = new List<AudioSource>();
-
+        private bool _bFinish;
 
         public void OnOpenWinPanel()
         {
@@ -25,32 +25,35 @@ namespace UI
                     count += 1;
                 }
             }
-
-
             StartCoroutine(DisplayCrown(count));
+        }
+
+        private void OnDisable()
+        {
+            _bFinish = false;
         }
 
 
         IEnumerator DisplayCrown(int count)
         {
-            for (int i = 0; i < 3; i++)
+            if (!_bFinish)
             {
-                crowns[i].transform.localScale = new Vector3(0, 0, 0);
-            }
-
-            for (int i = 0; i < count; i++)
-            {
-                iTween.ScaleTo(crowns[i],
-                    iTween.Hash("time", 1.0, "easetype", iTween.EaseType.easeOutElastic, "scale",
-                        new Vector3(1, 1, 1)));
-                crownAudio[i].Play();
-                if (i == count - 1)
+                for (int i = 0; i < 3; i++)
                 {
-                    restartButton.enabled = true;
-                    yield break;
+                    crowns[i].transform.localScale = new Vector3(0, 0, 0);
                 }
-                yield return new WaitForSeconds(1f);
+                
+                for (int i = 0; i < count; i++)
+                {
+                    iTween.ScaleTo(crowns[i],
+                        iTween.Hash("time", 1.0, "easetype", iTween.EaseType.easeOutElastic, "scale",
+                            new Vector3(1, 1, 1)));
+                    crownAudio[i].Play();
+                    yield return new WaitForSeconds(1f);
+                }
+                restartButton.enabled = true;
             }
+            _bFinish = true;
         }
     }
 }
