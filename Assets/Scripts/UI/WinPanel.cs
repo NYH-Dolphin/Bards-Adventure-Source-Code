@@ -16,7 +16,6 @@ namespace UI
 
         public void OnOpenWinPanel()
         {
-            restartButton.enabled = false;
             int count = 0;
             foreach (CrownBehavior crown in DancingLineGameManager.Instance._listCrowns)
             {
@@ -51,7 +50,6 @@ namespace UI
                     crownAudio[i].Play();
                     yield return new WaitForSeconds(1f);
                 }
-                restartButton.enabled = true;
             }
             _bFinish = true;
             DancingLineGameManager.Instance.RefreshCrown();
