@@ -54,6 +54,7 @@ namespace UI
                 restartButton.enabled = true;
             }
             _bFinish = true;
+            DancingLineGameManager.Instance.RefreshCrown();
         }
     }
 }

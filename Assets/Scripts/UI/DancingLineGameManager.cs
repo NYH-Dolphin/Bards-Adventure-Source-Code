@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Control;
 using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.UI;
@@ -118,7 +119,8 @@ namespace UI
 
 
         public CrownBehavior[] _listCrowns = new CrownBehavior[3];
-        
+        public List<ItemBehavior> _listItems = new List<ItemBehavior>();
+
         public static DancingLineGameManager Instance;
 
         private void Awake()
@@ -145,6 +147,11 @@ namespace UI
         public void RegisterCrown(CrownBehavior crown)
         {
             _listCrowns[crown.iIndex] = crown;
+        }
+
+        public void ResisterItem(ItemBehavior item)
+        {
+            _listItems.Add(item);
         }
 
         public void OnClickGameStart()
@@ -206,12 +213,10 @@ namespace UI
             bStart = false;
             bWin = false;
             btnEffect.Play();
-            foreach (CrownBehavior crown in _listCrowns)
-            {
-                crown.Refresh();
-            }
+            RefreshCrown();
             GameObject.Find("Line").GetComponent<LineController>().RefreshCheckPoint();
             GameObject.Find("Line").GetComponent<LineController>().OnGameEnd();
+            GameObject.Find("Main Camera").GetComponent<CameraMovement>().Restart();
             OnOpenMainCanvas();
         }
 
@@ -235,8 +240,17 @@ namespace UI
             }
         }
 
+        public void RefreshCrown()
+        {
+            foreach (CrownBehavior crown in _listCrowns)
+            {
+                crown.Refresh();
+            }
+        }
 
-        
+
+
+
         /// <summary>
         /// 当结束后从上一个检查点开始
         /// </summary>
@@ -248,6 +262,7 @@ namespace UI
             {
                 _listCrowns[index].bGetCrown = false;
             }
+            GameObject.Find("Main Camera").GetComponent<CameraMovement>().Refresh();
             toggle.isOn = true;
         }
 

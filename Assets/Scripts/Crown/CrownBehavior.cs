@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
+using Control;
 using UI;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
@@ -69,6 +71,7 @@ namespace DefaultNamespace
         {
             bGetCrown = true;
             line.RecordCheckPoint(iIndex);
+            GameObject.Find("Main Camera").GetComponent<CameraMovement>().RecordObjectToFollow(); // 摄像机记录位置
             objCrown.SetActive(false);
         }
 

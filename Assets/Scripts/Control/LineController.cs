@@ -34,6 +34,7 @@ namespace DefaultNamespace
         private bool _bLastIsLeft; // 记录上一次步骤是否是向左
         public bool[] crownGet = new bool[3]; // 获得的皇冠数量
         private Vector3 _lastPos; // 上一次获得皇冠的时候的位置
+        private Quaternion _lastRot; // 上一次获得皇冠的旋转
         private float _lastTime; // 上一次获得皇冠的时间点
         public int lastIndex;
 
@@ -126,6 +127,7 @@ namespace DefaultNamespace
             _bLastIsLeft = bLeft;
             crownGet[index] = true;
             _lastPos = transform.position;
+            _lastRot = transform.rotation;
             _lastTime = DancingLineGameManager.Instance.music.time;
             lastIndex = index;
         }
@@ -140,6 +142,7 @@ namespace DefaultNamespace
             }
 
             _lastPos = new Vector3(0, 0, 0);
+            _lastRot = new Quaternion(0, 0, 0, 0);
             _lastTime = 0f;
             lastIndex = -1;
         }
