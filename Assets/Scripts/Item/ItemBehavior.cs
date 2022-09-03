@@ -7,7 +7,7 @@ namespace DefaultNamespace
     public abstract class ItemBehavior : MonoBehaviour
     {
         public float triggerTime; // 触发时间
-        
+        private bool _bTriggered;
 
         private void Start()
         {
@@ -23,12 +23,17 @@ namespace DefaultNamespace
 
         protected void Update()
         {
-            if (DancingLineGameManager.Instance.music.time - triggerTime <= 5 * Time.deltaTime &&
-                DancingLineGameManager.Instance.music.time > triggerTime)
+            if (!_bTriggered && DancingLineGameManager.Instance.music.time > triggerTime &&
+                DancingLineGameManager.Instance.music.time - triggerTime <= 10 * Time.deltaTime)
             {
                 OnTriggerEvent();
+                _bTriggered = true;
+            }
+            
+            if (_bTriggered && DancingLineGameManager.Instance.music.time - triggerTime > 10 * Time.deltaTime)
+            {
+                _bTriggered = false;
             }
         }
-        
     }
 }

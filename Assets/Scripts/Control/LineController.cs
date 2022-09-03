@@ -92,7 +92,10 @@ namespace DefaultNamespace
             {
                 if (BPress)
                 {
-                    loseTimer.FillTime();
+                    if (!_bObstacle)
+                    {
+                        loseTimer.FillTime();
+                    }
                 }
 
                 loseTimer.Tick(Time.deltaTime);
@@ -157,7 +160,7 @@ namespace DefaultNamespace
             // 碰撞的是障碍物的情况
             else if (other.gameObject.layer == 7)
             {
-                Debug.Log($"collide {other.gameObject.name}");
+                // Debug.Log($"collide {other.gameObject.name}");
                 DancingLineGameManager.Instance.bLose = true; // 输掉游戏
                 _bObstacle = true;
                 gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
