@@ -4,7 +4,6 @@ using Control;
 using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.UI;
-using Utils;
 
 namespace UI
 {
@@ -17,6 +16,7 @@ namespace UI
         public GameObject restartCanvas;
         public GameObject countDownCanvas;
         public GameObject winCanvas;
+        public GameObject helpCanvas;
 
         public Toggle toggle; // 暂停/开始 toggle
         public Button restart; // 重新开始btn
@@ -120,6 +120,7 @@ namespace UI
 
         public CrownBehavior[] _listCrowns = new CrownBehavior[3];
         public List<ItemBehavior> _listItems = new List<ItemBehavior>();
+        public List<AudioItem> _listAudios = new List<AudioItem>();
 
         public static DancingLineGameManager Instance;
 
@@ -154,6 +155,20 @@ namespace UI
             _listItems.Add(item);
         }
 
+
+        public void RegisterAudio(AudioItem item)
+        {
+            _listAudios.Add(item);
+        }
+
+        private void RefreshAudio()
+        {
+            foreach (AudioItem audio in _listAudios)
+            {
+                PlayerPrefs.SetInt(audio.gameObject.name, 0);
+            }
+        }
+
         public void OnClickGameStart()
         {
             bStart = false;
@@ -167,6 +182,7 @@ namespace UI
             restartCanvas.SetActive(false);
             countDownCanvas.SetActive(false);
             winCanvas.SetActive(false);
+            helpCanvas.SetActive(false);
             toggle.enabled = true;
             restart.enabled = true;
         }
@@ -180,6 +196,8 @@ namespace UI
             restartCanvas.SetActive(false);
             countDownCanvas.SetActive(false);
             winCanvas.SetActive(false);
+            helpCanvas.SetActive(false);
+            RefreshAudio();
         }
 
 
@@ -192,6 +210,7 @@ namespace UI
             restartCanvas.SetActive(false);
             countDownCanvas.SetActive(false);
             winCanvas.SetActive(false);
+            helpCanvas.SetActive(false);
         }
 
 
@@ -203,6 +222,7 @@ namespace UI
             pauseCanvas.SetActive(false);
             restartCanvas.SetActive(false);
             countDownCanvas.SetActive(false);
+            helpCanvas.SetActive(false);
             winCanvas.SetActive(true);
             winCanvas.GetComponent<WinPanel>().OnOpenWinPanel();
         }
@@ -219,6 +239,43 @@ namespace UI
             GameObject.Find("Main Camera").GetComponent<CameraMovement>().Restart();
             OnOpenMainCanvas();
         }
+
+
+        public void OnClickCloseButton()
+        {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+        }
+
+
+
+        public void OnClickHelpButton()
+        {
+            btnEffect.Play();
+            OnOpenHelpCanvas();
+        }
+
+        public void OnCloseHelpCanvas()
+        {
+            btnEffect.Play();
+            OnOpenMainCanvas();
+        }
+
+        private void OnOpenHelpCanvas()
+        {
+            loseCanvas.SetActive(false);
+            mainCanvas.SetActive(false);
+            gameCanvas.SetActive(false);
+            pauseCanvas.SetActive(false);
+            restartCanvas.SetActive(false);
+            countDownCanvas.SetActive(false);
+            helpCanvas.SetActive(true);
+            winCanvas.SetActive(false);
+        }
+        
 
         public void OnClickCancelRestart()
         {
@@ -249,8 +306,6 @@ namespace UI
         }
 
 
-
-
         /// <summary>
         /// 当结束后从上一个检查点开始
         /// </summary>
@@ -262,6 +317,7 @@ namespace UI
             {
                 _listCrowns[index].bGetCrown = false;
             }
+
             GameObject.Find("Main Camera").GetComponent<CameraMovement>().Refresh();
             toggle.isOn = true;
         }

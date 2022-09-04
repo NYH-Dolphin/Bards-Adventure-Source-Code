@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Control;
 using UI;
 using UnityEngine;
 using Utils;
@@ -103,6 +104,7 @@ namespace DefaultNamespace
                 {
                     DancingLineGameManager.Instance.bLose = true; // 输掉游戏
                     gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+                    // GameObject.Find("Main Camera").GetComponent<CameraMovement>().enabled = false;
                 }
 
 
@@ -113,6 +115,7 @@ namespace DefaultNamespace
                     {
                         DancingLineGameManager.Instance.bStart = false; // 结束游戏
                         backTime.FillTime();
+                        // GameObject.Find("Main Camera").GetComponent<CameraMovement>().enabled = true;
                     }
                 }
 
