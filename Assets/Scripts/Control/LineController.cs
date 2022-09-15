@@ -185,6 +185,7 @@ namespace DefaultNamespace
             gameObject.transform.position = _lastPos;
             gameObject.transform.rotation = new Quaternion(0, 0, 0, 0);
             DancingLineGameManager.Instance.OnOpenLoseCanvas();
+            DancingLineGameManager.Instance.RefreshItems();
 
             // 删除所有的prefab
             List<Transform> lst = new List<Transform>();

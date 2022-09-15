@@ -80,6 +80,7 @@ namespace UI
                 {
                     Instance.toggle.enabled = false;
                     restart.enabled = false;
+                    RefreshItems();
                 }
             }
         }
@@ -169,6 +170,14 @@ namespace UI
             }
         }
 
+        public void RefreshItems()
+        {
+            foreach (ItemBehavior item in _listItems)
+            {
+                item.Refresh();
+            }
+        }
+
         public void OnClickGameStart()
         {
             bStart = false;
@@ -225,6 +234,7 @@ namespace UI
             helpCanvas.SetActive(false);
             winCanvas.SetActive(true);
             winCanvas.GetComponent<WinPanel>().OnOpenWinPanel();
+
         }
 
         public void OnClickRestartBtn()

@@ -9,7 +9,7 @@ namespace DefaultNamespace
         public float triggerTime; // 触发时间
         private bool _bTriggered;
 
-        private void Start()
+        protected void Start()
         {
             DancingLineGameManager.Instance.ResisterItem(this);
         }
@@ -19,6 +19,12 @@ namespace DefaultNamespace
         /// </summary>
         public virtual void OnTriggerEvent()
         {
+        }
+
+
+        public virtual void Refresh()
+        {
+            
         }
 
         protected void Update()
