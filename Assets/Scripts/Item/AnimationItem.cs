@@ -23,7 +23,6 @@ public class AnimationItem : ItemBehavior
 
     public override void OnTriggerEvent()
     {
-        Debug.Log("trigger!");
         iTween.MoveAdd(gameObject,
             iTween.Hash("time", fAppearTime, "amount", new Vector3(0, yOffset, 0), "easetype", easetype));
     }

@@ -7,6 +7,7 @@ namespace DefaultNamespace
     public abstract class ItemBehavior : MonoBehaviour
     {
         public float triggerTime; // 触发时间
+        public bool bPause; // 是否暂停
         private bool _bTriggered;
 
         protected void Start()
@@ -29,6 +30,11 @@ namespace DefaultNamespace
 
         protected void Update()
         {
+            if (bPause)
+            {
+                return;
+            }
+
             if (!_bTriggered && DancingLineGameManager.Instance.music.time > triggerTime &&
                 DancingLineGameManager.Instance.music.time - triggerTime <= 10 * Time.deltaTime)
             {

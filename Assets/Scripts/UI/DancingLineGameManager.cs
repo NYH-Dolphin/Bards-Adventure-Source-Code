@@ -38,10 +38,18 @@ namespace UI
                 if (value)
                 {
                     music.Pause();
+                    foreach (ItemBehavior item in _listItems)
+                    {
+                        item.bPause = true;
+                    }
                 }
                 else
                 {
                     music.Play();
+                    foreach (ItemBehavior item in _listItems)
+                    {
+                        item.bPause = false;
+                    }
                 }
 
                 _bPause = value;
@@ -80,9 +88,16 @@ namespace UI
                 {
                     Instance.toggle.enabled = false;
                     restart.enabled = false;
-                    RefreshItems();
+                    StartCoroutine(OnWinRefreshItems());
                 }
             }
+        }
+
+        // wait for 1.5 seconds and refresh all the items, since the scene need to be continue displayed
+        private IEnumerator OnWinRefreshItems()
+        {
+            yield return new WaitForSeconds(1.5f);
+            RefreshItems();
         }
 
         // 游戏调用委托

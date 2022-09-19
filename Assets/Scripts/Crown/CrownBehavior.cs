@@ -14,15 +14,26 @@ namespace DefaultNamespace
         public int iIndex;
         public Image imgYellowCrown;
         public GameObject objCrown;
+        public GameObject objParticleEffect;
+        public GameObject objRoute;
+        private Transform[] _tranRoutes;
 
-        private TimeCountDown _colorTimer = new TimeCountDown(0.5f);
+        private Vector3 _vCrownOriginalPos;
+        private Vector3 _vParticlePos;
+        private TimeCountDown _colorTimer = new TimeCountDown(1f);
         private bool _bColor;
+        private TimeCountDown _particleRouteTimer = new TimeCountDown(1f);
+        private bool _bRoute;
 
 
         private void Start()
         {
             bGetCrown = false;
             DancingLineGameManager.Instance.RegisterCrown(this);
+            _vCrownOriginalPos = objCrown.transform.position;
+            _vParticlePos = objParticleEffect.transform.position;
+            _tranRoutes = objRoute.transform.GetComponentsInChildren<Transform>();
+            _tranRoutes[0] = _tranRoutes[1];
         }
 
         private void Update()
@@ -39,6 +50,17 @@ namespace DefaultNamespace
                     _bColor = false;
                 }
             }
+
+            if (_bRoute)
+            {
+                _particleRouteTimer.Tick(Time.deltaTime);
+                if (_particleRouteTimer.TimeOut)
+                {
+                    _bRoute = false;
+                    _particleRouteTimer.FillTime();
+                }
+                iTween.PutOnPath(objParticleEffect, _tranRoutes, _particleRouteTimer.ValueRate);
+            }
         }
 
         private bool _bGetCrown; // 是否获取了皇冠
@@ -52,9 +74,11 @@ namespace DefaultNamespace
                 if (_bGetCrown)
                 {
                     _bColor = true;
+                    objParticleEffect.SetActive(true);
                 }
                 else
                 {
+                    objParticleEffect.SetActive(false);
                     GameObject.Find("Line").GetComponent<LineController>().crownGet[iIndex] = false;
                     Color color = imgYellowCrown.color;
                     color.a = 0;
@@ -73,13 +97,18 @@ namespace DefaultNamespace
             line.RecordCheckPoint(iIndex);
             GameObject.Find("Main Camera").GetComponent<CameraMovement>().RecordObjectToFollow(); // 摄像机记录位置
             objCrown.SetActive(false);
+            _bRoute = true;
         }
 
 
         public void Refresh()
         {
+            objParticleEffect.SetActive(true);
+            objParticleEffect.transform.position = _vParticlePos;
             objCrown.SetActive(true);
+            objCrown.transform.position = _vCrownOriginalPos;
             bGetCrown = false;
+            _bRoute = false;
         }
     }
 }
