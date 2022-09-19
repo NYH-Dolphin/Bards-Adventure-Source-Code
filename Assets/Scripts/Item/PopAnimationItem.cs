@@ -2,7 +2,7 @@
 using UI;
 using UnityEngine;
 
-public class AnimationItem : ItemBehavior
+public class PopAnimationItem : ItemBehavior
 {
     public float yOffset = 3f;
     public float fAppearTime = 0.3f;
