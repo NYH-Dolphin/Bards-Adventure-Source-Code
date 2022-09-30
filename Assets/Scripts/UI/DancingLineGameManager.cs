@@ -19,11 +19,12 @@ namespace UI
         public GameObject helpCanvas;
 
         public Toggle toggle; // 暂停/开始 toggle
+        public Toggle hintToggle1; // Main页面的Hint提示Toggle
+        public Toggle hintToggle2; // Game页面的Hint提示Toggle
         public Button restart; // 重新开始btn
         public Text countDown; // 倒计时
         public AudioSource btnEffect; // 按钮音效
-
-
+        public List<GameObject> listHints; // 提示image
         public AudioSource music; // 音乐
 
 
@@ -158,6 +159,40 @@ namespace UI
                 bPause = true;
                 toggle.enabled = false;
             });
+
+            if (!PlayerPrefs.HasKey("hint"))
+            {
+                hintToggle1.isOn = true;
+                PlayerPrefs.SetInt("hint", 1);
+                foreach (GameObject hint in listHints)
+                {
+                    hint.SetActive(true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 点击提示Toggle切换是否提示
+        /// </summary>
+        /// <param name="t"></param>
+        public void OnClickHintToggle(Toggle t)
+        {
+            if (t.isOn)
+            {
+                PlayerPrefs.SetInt("hint", 1);
+                foreach (GameObject obj in listHints)
+                {
+                    obj.SetActive(true);
+                }
+            }
+            else
+            {
+                PlayerPrefs.SetInt("hint", 0);
+                foreach (GameObject obj in listHints)
+                {
+                    obj.SetActive(false);
+                }
+            }
         }
 
         // 注册皇冠
@@ -199,6 +234,7 @@ namespace UI
             bStart = true;
             bPause = false;
             toggle.isOn = false;
+            hintToggle2.isOn = PlayerPrefs.GetInt("hint", 0) == 1;
             mainCanvas.SetActive(false);
             gameCanvas.SetActive(true);
             loseCanvas.SetActive(false);
@@ -222,6 +258,7 @@ namespace UI
             winCanvas.SetActive(false);
             helpCanvas.SetActive(false);
             RefreshAudio();
+            hintToggle1.isOn = PlayerPrefs.GetInt("hint", 0) == 1;
         }
 
 
@@ -249,7 +286,6 @@ namespace UI
             helpCanvas.SetActive(false);
             winCanvas.SetActive(true);
             winCanvas.GetComponent<WinPanel>().OnOpenWinPanel();
-
         }
 
         public void OnClickRestartBtn()
@@ -269,12 +305,11 @@ namespace UI
         public void OnClickCloseButton()
         {
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
+            UnityEditor.EditorApplication.isPlaying = false;
 #else
             Application.Quit();
 #endif
         }
-
 
 
         public void OnClickHelpButton()
@@ -300,7 +335,7 @@ namespace UI
             helpCanvas.SetActive(true);
             winCanvas.SetActive(false);
         }
-        
+
 
         public void OnClickCancelRestart()
         {
