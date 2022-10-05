@@ -71,8 +71,36 @@ namespace DefaultNamespace
             DancingLineGameManager.Instance.OnGameEnd += OnGameEnd;
         }
 
+
+        private TimeCountDown _longPress = new TimeCountDown(0.15f);
         private void Update()
         {
+            
+            if (!BPress)
+            {
+                if (Input.GetKey(KeyCode.Space))
+                {
+                    _longPress.Tick(Time.deltaTime);
+                    if (_longPress.TimeOut)
+                    {
+                        OnLongPress();
+                    }
+                }
+            }
+
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                if (!_longPress.TimeOut)
+                {
+                    OnClick();
+                }
+                else
+                {
+                    _longPress.FillTime();
+                    OnCancelLongPress();
+                }
+            }
+
             if (DancingLineGameManager.Instance.bWin)
             {
                 winTimer.Tick(Time.deltaTime);

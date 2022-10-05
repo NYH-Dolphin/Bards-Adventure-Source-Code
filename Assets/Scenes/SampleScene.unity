@@ -32910,12 +32910,12 @@ RectTransform:
   m_LocalScale: {x: 0.29999998, y: 0.29999998, z: 0.29999998}
   m_Children: []
   m_Father: {fileID: 1389525950}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -900, y: -200}
-  m_SizeDelta: {x: 2524.438, y: 862.2639}
+  m_AnchoredPosition: {x: -1422.8, y: -557}
+  m_SizeDelta: {x: 4093.7827, y: 862.2639}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &791033869
 MonoBehaviour:
@@ -32939,7 +32939,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 48f965dde3ba1d043bd5f3a42d86fc54, type: 3}
-    m_FontSize: 200
+    m_FontSize: 250
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 0
@@ -32950,7 +32950,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Hold BUTTON
+  m_Text: use [space] or mouse to play
 --- !u!222 &791033870
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -55691,7 +55691,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1389525950
 RectTransform:
   m_ObjectHideFlags: 0
@@ -55708,6 +55708,7 @@ RectTransform:
   - {fileID: 1113242237}
   - {fileID: 282652567}
   - {fileID: 1875915260}
+  - {fileID: 1824706087}
   - {fileID: 791033868}
   m_Father: {fileID: 104333176}
   m_RootOrder: 4
@@ -55734,6 +55735,7 @@ MonoBehaviour:
   - {fileID: 1113242236}
   - {fileID: 1875915259}
   - {fileID: 791033867}
+  - {fileID: 1824706086}
 --- !u!1001 &1389638752
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -74014,6 +74016,85 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1822469652}
+  m_CullTransparentMesh: 1
+--- !u!1 &1824706086
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1824706087}
+  - component: {fileID: 1824706089}
+  - component: {fileID: 1824706088}
+  m_Layer: 5
+  m_Name: Text (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1824706087
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1824706086}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.29999998, y: 0.29999998, z: 0.29999998}
+  m_Children: []
+  m_Father: {fileID: 1389525950}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: -900, y: -200}
+  m_SizeDelta: {x: 2524.438, y: 862.2639}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1824706088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1824706086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 48f965dde3ba1d043bd5f3a42d86fc54, type: 3}
+    m_FontSize: 200
+    m_FontStyle: 1
+    m_BestFit: 0
+    m_MinSize: 0
+    m_MaxSize: 300
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Hold BUTTON
+--- !u!222 &1824706089
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1824706086}
   m_CullTransparentMesh: 1
 --- !u!1 &1825732292 stripped
 GameObject:
