@@ -71,35 +71,58 @@ namespace DefaultNamespace
             DancingLineGameManager.Instance.OnGameEnd += OnGameEnd;
         }
 
+        private TimeCountDown _startInterval = new TimeCountDown(0.5f);
 
         private TimeCountDown _longPress = new TimeCountDown(0.15f);
+
         private void Update()
         {
-            
-            if (!BPress)
+            // 避免空格冲突问题
+            if (DancingLineGameManager.Instance.state == State.GAME && PlayerPrefs.GetInt("enter") == 1)
             {
-                if (Input.GetKey(KeyCode.Space))
+                if (_startInterval.TimeOut)
                 {
-                    _longPress.Tick(Time.deltaTime);
-                    if (_longPress.TimeOut)
+                    PlayerPrefs.SetInt("enter", 0);
+                    _startInterval.FillTime();
+                }
+                else
+                {
+                    _startInterval.Tick(Time.deltaTime);
+                    Vector3 dir = bLeft ? Vector3.left : Vector3.forward;
+                    transform.Translate(dir * fSpeed * Time.deltaTime, Space.World);
+                    return;
+                }
+            }
+
+            if (DancingLineGameManager.Instance.bStart && !DancingLineGameManager.Instance.bLose &&
+                !DancingLineGameManager.Instance.bPause)
+            {
+                if (!BPress)
+                {
+                    if (Input.GetKey(KeyCode.Space))
                     {
-                        OnLongPress();
+                        _longPress.Tick(Time.deltaTime);
+                        if (_longPress.TimeOut)
+                        {
+                            OnLongPress();
+                        }
+                    }
+                }
+
+                if (Input.GetKeyUp(KeyCode.Space))
+                {
+                    if (!_longPress.TimeOut)
+                    {
+                        OnClick();
+                    }
+                    else
+                    {
+                        _longPress.FillTime();
+                        OnCancelLongPress();
                     }
                 }
             }
 
-            if (Input.GetKeyUp(KeyCode.Space))
-            {
-                if (!_longPress.TimeOut)
-                {
-                    OnClick();
-                }
-                else
-                {
-                    _longPress.FillTime();
-                    OnCancelLongPress();
-                }
-            }
 
             if (DancingLineGameManager.Instance.bWin)
             {
@@ -132,7 +155,6 @@ namespace DefaultNamespace
                 {
                     DancingLineGameManager.Instance.bLose = true; // 输掉游戏
                     gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
-                    // GameObject.Find("Main Camera").GetComponent<CameraMovement>().enabled = false;
                 }
 
 

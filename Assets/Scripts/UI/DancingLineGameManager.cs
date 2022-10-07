@@ -7,6 +7,18 @@ using UnityEngine.UI;
 
 namespace UI
 {
+    public enum State
+    {
+        INITIAL,
+        MAIN,
+        GAME,
+        PAUSE,
+        RESTART,
+        WIN,
+        LOSE,
+        HELP
+    }
+
     public class DancingLineGameManager : MonoBehaviour
     {
         public GameObject mainCanvas;
@@ -26,6 +38,8 @@ namespace UI
         public AudioSource btnEffect; // 按钮音效
         public List<GameObject> listHints; // 提示image
         public AudioSource music; // 音乐
+
+        public State state = State.INITIAL; // 游戏状态
 
 
         // 暂停游戏
@@ -171,6 +185,79 @@ namespace UI
             }
         }
 
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
+            {
+                switch (state)
+                {
+                    case State.MAIN:
+                        OnClickGameStart();
+                        break;
+                    case State.PAUSE:
+                        toggle.isOn = false;
+                        break;
+                    case State.LOSE:
+                        OnStartFromCheckPoint();
+                        break;
+                    case State.WIN:
+                        OnClickRestartBtn();
+                        break;
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.H) && state == State.MAIN)
+            {
+                state = State.HELP;
+                OnClickHelpButton();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Escape) && state == State.HELP)
+            {
+                state = State.MAIN;
+                OnCloseHelpCanvas();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Escape) && state == State.GAME)
+            {
+                restartCanvas.SetActive(true);
+                pauseCanvas.SetActive(false);
+                bPause = true;
+                toggle.enabled = false;
+                state = State.RESTART;
+            }
+            
+            if (Input.GetKeyDown(KeyCode.P) && state == State.PAUSE)
+            {
+                toggle.isOn = false;
+            }
+            
+            if (Input.GetKeyDown(KeyCode.P) && state == State.GAME)
+            {
+                toggle.isOn = true;
+            }
+            
+
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                hintToggle1.isOn = !hintToggle1.isOn;
+                hintToggle2.isOn = hintToggle1.isOn;
+            }
+
+
+            if (state == State.RESTART)
+            {
+                if (Input.GetKeyDown(KeyCode.Y))
+                {
+                    OnClickRestartBtn();
+                }else if (Input.GetKeyDown(KeyCode.N))
+                {
+                    OnClickCancelRestart();
+                }
+            }
+        }
+
         /// <summary>
         /// 点击提示Toggle切换是否提示
         /// </summary>
@@ -245,10 +332,12 @@ namespace UI
             helpCanvas.SetActive(false);
             toggle.enabled = true;
             restart.enabled = true;
+            state = State.GAME;
         }
 
         public void OnOpenMainCanvas()
         {
+            PlayerPrefs.SetInt("enter", 1);
             mainCanvas.SetActive(true);
             gameCanvas.SetActive(false);
             loseCanvas.SetActive(false);
@@ -259,11 +348,13 @@ namespace UI
             helpCanvas.SetActive(false);
             RefreshAudio();
             hintToggle1.isOn = PlayerPrefs.GetInt("hint", 0) == 1;
+            state = State.MAIN;
         }
 
 
         public void OnOpenLoseCanvas()
         {
+            state = State.LOSE;
             loseCanvas.SetActive(true);
             mainCanvas.SetActive(false);
             gameCanvas.SetActive(false);
@@ -277,6 +368,7 @@ namespace UI
 
         public void OnOpenWinCanvas()
         {
+            state = State.WIN;
             loseCanvas.SetActive(false);
             mainCanvas.SetActive(false);
             gameCanvas.SetActive(false);
@@ -351,6 +443,7 @@ namespace UI
             else
             {
                 bPause = true;
+                state = State.PAUSE;
                 pauseCanvas.SetActive(true);
                 restart.enabled = false;
                 btnEffect.Play();
@@ -401,6 +494,7 @@ namespace UI
             countDownCanvas.SetActive(false);
             toggle.enabled = true;
             restart.enabled = true;
+            state = State.GAME;
         }
     }
 }
